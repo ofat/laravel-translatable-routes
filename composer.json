@@ -1,0 +1,38 @@
+{
+    "name": "ofat/laravel-translatable-routes",
+    "description": "Laravel package for translatable routes",
+    "license": "MIT",
+    "keywords": [
+        "laravel",
+        "translatable"
+    ],
+    "authors": [
+        {
+            "name": "Vitalii Ofat",
+            "email": "ofatv22@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^7.3 || ^8.0"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "autoload": {
+        "psr-4": {
+            "Ofat\\LaravelTranslatableRoutes\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Ofat\\LaravelTranslatableRoutes\\Tests\\": "tests"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Ofat\\LaravelTranslatableRoutes\\TranslatableRoutesServiceProvider"
+            ]
+        }
+    },
+    "version": "1.0.0"
+}

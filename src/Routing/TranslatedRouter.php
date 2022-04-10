@@ -30,7 +30,7 @@ class TranslatedRouter extends Router
         return $this->routes->add($this->createRoute($methods, $uri, $action));
     }
 
-    public function languageGroup($routes)
+    public function localeGroup($routes)
     {
         foreach(config('translatable-routes.locales') as $locale)
         {

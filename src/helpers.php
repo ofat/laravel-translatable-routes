@@ -17,7 +17,6 @@ if (! function_exists('routeInLocale')) {
     }
 }
 
-die('test');
 if (! function_exists('urlWithLocale')) {
     /**
      * Generate an absolute URL to the given path with locale at the start

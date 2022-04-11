@@ -48,7 +48,7 @@ return [
 Once the package is installed you can use your translation strings in 
 route defining with square brackets.
 
-To define group with added language prefix you can use `languageGroup` method
+To define group with added language prefix you can use `localeGroup` method
 and write all routes inside it.
 
 ```php

@@ -1,4 +1,9 @@
+[<img src="https://github-ads.s3.eu-central-1.amazonaws.com/support-ukraine.svg?t=1" />](https://supportukrainenow.org)
+
 # Package to make Laravel routes translatable
+
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/ofat/laravel-translatable-routes.svg?style=flat-square)](https://packagist.org/packages/ofat/laravel-translatable-routes)
+[![MIT Licensed](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
 
 This package provides you possibility to translate your urls. For example:
 

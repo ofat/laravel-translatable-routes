@@ -1,5 +1,7 @@
 <?php
 
 return [
-    'locales' => []
+    'locales' => [],
+
+    'url-translators' => []
 ];

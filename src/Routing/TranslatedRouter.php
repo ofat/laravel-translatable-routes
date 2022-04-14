@@ -4,9 +4,6 @@ namespace Ofat\LaravelTranslatableRoutes\Routing;
 
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Events\Dispatcher;
-use Illuminate\Contracts\Routing\Registrar;
-use Illuminate\Routing\Events\Routing;
-use Illuminate\Routing\Route;
 use Illuminate\Routing\RouteCollection;
 use Illuminate\Routing\Router;
 use Ofat\LaravelTranslatableRoutes\Http\Middleware\LocaleDetect;
@@ -26,8 +23,23 @@ class TranslatedRouter extends Router
 
     public function addRoute($methods, $uri, $action)
     {
-        $uri = $this->translationParser->processUri($uri);
-        return $this->routes->add($this->createRoute($methods, $uri, $action));
+        $translatedUri = $this->translationParser->processUri($uri);
+        $route = $this->createRoute($methods, $translatedUri, $action)->defaultName($uri);
+        return $this->routes->add($route);
+    }
+
+    public function newRoute($methods, $uri, $action)
+    {
+        return (new TranslatedRoute($methods, $uri, $action))
+            ->setRouter($this)
+            ->setContainer($this->container);
+    }
+
+    public function locale($locale)
+    {
+        $this->updateGroupStack(['locale' => $locale]);
+
+        return $this;
     }
 
     public function localeGroup($routes)
@@ -36,10 +48,12 @@ class TranslatedRouter extends Router
         {
             app()->setLocale($locale);
             $this
+                ->locale($locale)
                 ->middleware(LocaleDetect::class)
-                ->name($locale.'.')
                 ->prefix($locale)
                 ->group($routes);
+
+            array_pop($this->groupStack);
         }
     }
 }

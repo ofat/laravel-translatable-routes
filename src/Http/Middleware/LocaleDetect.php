@@ -2,8 +2,6 @@
 
 namespace Ofat\LaravelTranslatableRoutes\Http\Middleware;
 
-use Closure;
-
 class LocaleDetect
 {
     /**
@@ -15,12 +13,11 @@ class LocaleDetect
      *
      * @throws \Illuminate\Auth\AuthenticationException
      */
-    public function handle($request, Closure $next)
+    public function handle($request, \Closure $next)
     {
         if ($request->segment(1)) {
             app()->setLocale( $request->segment(1) );
         }
-        app()->setLocale(config('app.locale'));
 
         return $next($request);
     }

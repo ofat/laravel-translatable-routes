@@ -18,7 +18,7 @@ It is very useful for good search engine optimization (seo).
 
 1. Install package via composer:
 ```bash
-composer require ofat/laravel-translatable 
+composer require ofat/laravel-translatable-routes 
 ```
 
 2. Add your translations to resource/lang like usual Laravel translations.

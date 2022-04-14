@@ -120,3 +120,59 @@ urlWithLocale('[country]/belgium');
 
 urlWithLocale('[country]/belgium', $params, 'en'); // specify needed locale. generates `de/land/belgium`
 ```
+
+## Locale switch
+
+To generate url for language switching you can use named route `switch-locale`
+
+```php
+route('switch-locale', 'fr')
+```
+
+All static routes will be switching by default. But for routes with parameters
+you can add strategies and define logic for translation:
+
+```php
+
+namespace App\Service\UrlTranslator;
+
+use App\Models\Country;
+use Ofat\LaravelTranslatableRoutes\UrlTranslator\Abstracts\AbstractUrlTranslation;
+
+class CountryUrlTranslation extends AbstractUrlTranslation
+{
+    /**
+     * Get current route translated url
+     * 
+     * @param string $locale
+     * @return string
+     */
+    public function getTranslatedUrl(string $locale): string
+    {
+        $country = Country::query()
+            ->where('url->'.$this->route->getLocale(), $this->route->parameter('country'))
+            ->firstOrFail();
+
+        return $this->urlGenerator->route('country', $country->url);
+    }
+
+    /**
+     * Check if current route is applicable to this strategy
+     *
+     * @return bool
+     */
+    public function isApplicable(): bool
+    {
+        return strpos($this->route->getName(), '.country') > 0;
+    }
+}
+```
+
+In this case if you try to switch language on page `/en/country/france` it will redirect to
+`/fr/les-pays/la-france`
+
+In `isApplicable` method you should write your logic for checking if 
+route is determined to your group needs.
+
+In `getTranslatedUrl` method you should write your logic to generate url for 
+your route on new locale

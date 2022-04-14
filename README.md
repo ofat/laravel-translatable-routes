@@ -1,4 +1,4 @@
-[<img src="https://github-ads.s3.eu-central-1.amazonaws.com/support-ukraine.svg?t=1" />](https://supportukrainenow.org)
+[<img src="https://www.nysenate.gov/sites/default/files/styles/760x377/public/press-release/main-image/fb_link_support_ukraine727.jpg" />](https://supportukrainenow.org)
 
 # Package to make Laravel routes translatable
 

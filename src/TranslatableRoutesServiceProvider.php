@@ -58,7 +58,7 @@ class TranslatableRoutesServiceProvider extends ServiceProvider
             $context->addStrategy( $app->make(EmptyRouteUrlTranslation::class) );
             $context->addStrategy( $app->make(EmptyParametersUrlTranslation::class) );
 
-            foreach (config('translatable-routes.url-translators') as $class) {
+            foreach (config('translatable-routes.url-translators', []) as $class) {
                 $context->addStrategy($app->make($class));
             }
 

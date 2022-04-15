@@ -44,7 +44,7 @@ class TranslatedRouter extends Router
 
     public function localeGroup($routes)
     {
-        foreach(config('translatable-routes.locales') as $locale)
+        foreach(config('translatable-routes.locales', []) as $locale)
         {
             app()->setLocale($locale);
             $this

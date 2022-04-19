@@ -142,9 +142,9 @@ you can add strategies and define logic for translation:
 namespace App\Service\UrlTranslator;
 
 use App\Models\Country;
-use Ofat\LaravelTranslatableRoutes\UrlTranslator\Abstracts\AbstractUrlTranslation;
+use Ofat\LaravelTranslatableRoutes\UrlTranslator\Abstracts\BaseUrlTranslation;
 
-class CountryUrlTranslation extends AbstractUrlTranslation
+class CountryUrlTranslation extends BaseUrlTranslation
 {
     /**
      * Get current route translated url

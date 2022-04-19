@@ -1,31 +1,29 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ofat\LaravelTranslatableRoutes\UrlTranslator;
 
+use Exception;
 use Illuminate\Contracts\Routing\UrlGenerator;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Request;
-use \Illuminate\Support\Facades\Route as RouteFacade;
+use Illuminate\Support\Facades\Route as RouteFacade;
+use Ofat\LaravelTranslatableRoutes\Routing\TranslatedRoute;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class UrlTranslator
 {
-
-    /**
-     * @var Route|null
-     */
-    protected ?Route $previousRoute = null;
+    protected ?TranslatedRoute $previousRoute = null;
 
     public function __construct(
         protected UrlGenerator $urlGenerator,
         protected Context $context
-    )
-    {}
+    ) {
+    }
 
     /**
-     * @param string $locale
-     * @return string
-     * @throws \Exception
+     * @throws Exception
      */
     public function getTranslatedPreviousUrl(string $locale): string
     {
@@ -35,19 +33,14 @@ class UrlTranslator
         return $this->context->translateUrl($this->previousRoute, $locale);
     }
 
-    /**
-     * @return void
-     */
-    protected function detectPreviousRoute()
+    protected function detectPreviousRoute(): void
     {
         $oldUrl = parse_url($this->urlGenerator->previous());
 
-        if(isset($oldUrl['path']))
-        {
+        if (isset($oldUrl['path'])) {
             try {
                 $this->previousRoute = RouteFacade::getRoutes()->match(Request::create($oldUrl['path']));
-            } catch (HttpException $exception)
-            {
+            } catch (HttpException $exception) {
             }
         }
     }

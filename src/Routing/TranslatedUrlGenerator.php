@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ofat\LaravelTranslatableRoutes\Routing;
 
 use Illuminate\Http\Request;
+use Illuminate\Routing\Exceptions\UrlGenerationException;
 use Illuminate\Routing\RouteCollectionInterface;
 use Illuminate\Routing\UrlGenerator;
 use Ofat\LaravelTranslatableRoutes\TranslationParser;
@@ -13,18 +16,28 @@ class TranslatedUrlGenerator extends UrlGenerator
     /**
      * Create a new Translated URL Generator instance.
      *
-     * @param TranslationParser $translationParser
-     * @param \Illuminate\Routing\RouteCollectionInterface $routes
-     * @param \Illuminate\Http\Request $request
      * @param null $assetRoot
      */
     public function __construct(
         protected TranslationParser $translationParser,
         RouteCollectionInterface $routes,
         Request $request,
-        $assetRoot = null)
-    {
+        $assetRoot = null
+    ) {
         parent::__construct($routes, $request, $assetRoot);
+    }
+
+    /**
+     * Generate an absolute URL to the given path with locale at the start
+     */
+    public function withLocale(string $path, mixed $extra = [], ?string $locale = null, ?bool $secure = null): string
+    {
+        if (is_null($locale)) {
+            $locale = app()->getLocale();
+        }
+        $path = sprintf('%s/%s', $locale, $path);
+        $path = $this->translationParser->processUri($path, $locale);
+        return parent::to($path, $extra, $secure);
     }
 
     /**
@@ -33,26 +46,6 @@ class TranslatedUrlGenerator extends UrlGenerator
     public function to($path, $extra = [], $secure = null)
     {
         $path = $this->translationParser->processUri($path);
-        return parent::to($path, $extra, $secure);
-    }
-
-    /**
-     * Generate an absolute URL to the given path with locale at the start
-     *
-     * @param  string  $path
-     * @param  mixed  $extra
-     * @param  string|null $locale
-     * @param  bool|null  $secure
-     * @return string
-     */
-    public function withLocale($path, $extra = [], $locale = null, $secure = null)
-    {
-        if(is_null($locale))
-        {
-            $locale = app()->getLocale();
-        }
-        $path = sprintf('%s/%s', $locale, $path);
-        $path = $this->translationParser->processUri($path, $locale);
         return parent::to($path, $extra, $secure);
     }
 
@@ -71,14 +64,9 @@ class TranslatedUrlGenerator extends UrlGenerator
     /**
      * Generate the URL to a named route in given locale
      *
-     * @param string $locale
-     * @param string $name
-     * @param mixed $parameters
-     * @param bool $absolute
-     * @return string
-     * @throws \Illuminate\Routing\Exceptions\UrlGenerationException
+     * @throws UrlGenerationException
      */
-    public function routeInLocale($locale, $name, $parameters = [], $absolute = true)
+    public function routeInLocale(string $locale, string $name, mixed $parameters = [], bool $absolute = true): string
     {
         $localedName = sprintf('%s.%s', $locale, $name);
         if (! is_null($route = $this->routes->getByName($localedName))) {

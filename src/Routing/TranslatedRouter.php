@@ -1,10 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ofat\LaravelTranslatableRoutes\Routing;
 
+use Closure;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Events\Dispatcher;
-use Illuminate\Routing\RouteCollection;
+use Illuminate\Routing\Route;
 use Illuminate\Routing\Router;
 use Ofat\LaravelTranslatableRoutes\Http\Middleware\LocaleDetect;
 use Ofat\LaravelTranslatableRoutes\TranslationParser;
@@ -13,47 +16,63 @@ class TranslatedRouter extends Router
 {
     public function __construct(
         protected TranslationParser $translationParser,
-        RouteCollection $routes,
+        Router $router,
         Dispatcher $events,
-        Container $container = null)
-    {
+        ?Container $container = null
+    ) {
         parent::__construct($events, $container);
-        $this->routes = $routes;
+        $this->routes = $router->getRoutes();
+        $this->middleware = $router->getMiddleware();
+        $this->middlewareGroups = $router->getMiddlewareGroups();
     }
 
-    public function addRoute($methods, $uri, $action)
+    /**
+     * @param array|string $methods
+     * @param string $uri
+     * @param array|string|callable|null $action
+     * @return Route|TranslatedRoute
+     */
+    public function addRoute($methods, $uri, $action): Route|TranslatedRoute
     {
         $translatedUri = $this->translationParser->processUri($uri);
         $route = $this->createRoute($methods, $translatedUri, $action)->defaultName($uri);
         return $this->routes->add($route);
     }
 
-    public function newRoute($methods, $uri, $action)
+    /**
+     * @param array|string $methods
+     * @param string $uri
+     * @param mixed $action
+     * @return Route|TranslatedRoute
+     */
+    public function newRoute($methods, $uri, $action): Route|TranslatedRoute
     {
         return (new TranslatedRoute($methods, $uri, $action))
             ->setRouter($this)
             ->setContainer($this->container);
     }
 
-    public function locale($locale)
+    public function localeGroup(Closure|string $callback): void
     {
-        $this->updateGroupStack(['locale' => $locale]);
-
-        return $this;
-    }
-
-    public function localeGroup($routes)
-    {
-        foreach(config('translatable-routes.locales', []) as $locale)
-        {
+        foreach (config('translatable-routes.locales', []) as $locale) {
             app()->setLocale($locale);
             $this
                 ->locale($locale)
                 ->middleware(LocaleDetect::class)
                 ->prefix($locale)
-                ->group($routes);
+                ->group($callback);
 
             array_pop($this->groupStack);
         }
+    }
+
+    /**
+     * @return $this
+     */
+    public function locale(string $locale): static
+    {
+        $this->updateGroupStack(['locale' => $locale]);
+
+        return $this;
     }
 }

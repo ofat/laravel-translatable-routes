@@ -1,7 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ofat\LaravelTranslatableRoutes\UrlTranslator\Exceptions;
 
-class NotFoundStrategy extends \Error
+use Error;
+
+class NotFoundStrategy extends Error
 {
 }

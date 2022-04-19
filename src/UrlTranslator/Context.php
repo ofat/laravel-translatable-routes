@@ -1,15 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ofat\LaravelTranslatableRoutes\UrlTranslator;
 
-use Illuminate\Routing\Route;
+use Ofat\LaravelTranslatableRoutes\Routing\TranslatedRoute;
 use Ofat\LaravelTranslatableRoutes\UrlTranslator\Contracts\UrlTranslation;
 use Ofat\LaravelTranslatableRoutes\UrlTranslator\Exceptions\NotFoundStrategy;
 
 class Context
 {
     /**
-     * @var UrlTranslation[]
+     * @var array<UrlTranslation>
      */
     protected array $strategies = [];
 
@@ -18,13 +20,7 @@ class Context
         $this->strategies[] = $urlTranslation;
     }
 
-    /**
-     * @param Route $route
-     * @param $locale
-     * @return string
-     * @throws \Error
-     */
-    public function translateUrl(Route $route, $locale): string
+    public function translateUrl(TranslatedRoute $route, string $locale): string
     {
         foreach ($this->strategies as $strategy) {
             $strategy->setRoute($route);

@@ -35,5 +35,12 @@
             ]
         }
     },
-    "version": "1.0.0"
+    "require-dev": {
+        "nunomaduro/phpinsights": "^2.2"
+    },
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
+    }
 }

@@ -1,12 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ofat\LaravelTranslatableRoutes\Routing;
 
 use Illuminate\Routing\Route;
 
 class TranslatedRoute extends Route
 {
-
     /**
      * @inheritDoc
      */
@@ -17,10 +18,8 @@ class TranslatedRoute extends Route
 
     /**
      * Get locale of the route instance
-     *
-     * @return mixed|null
      */
-    public function getLocale()
+    public function getLocale(): mixed
     {
         return $this->action['locale'] ?? null;
     }
@@ -29,11 +28,12 @@ class TranslatedRoute extends Route
      * Add default name for the route instance
      *
      * @param $name
+     *
      * @return $this
      */
-    public function defaultName($name)
+    public function defaultName($name): static
     {
-        $this->action['defaultName'] = isset($this->action['locale']) ? $this->action['locale'].'.'.$name : $name;
+        $this->action['defaultName'] = isset($this->action['locale']) ? $this->action['locale'] . '.' . $name : $name;
 
         return $this;
     }
@@ -41,17 +41,16 @@ class TranslatedRoute extends Route
     /**
      * @inheritDoc
      */
-    public function name($name)
+    public function name($name): static
     {
-        if(isset($this->action['as'])) {
-            $this->action['as'] = $this->action['as'].$name;
-        } elseif(isset($this->action['locale'])) {
-            $this->action['as'] = $this->action['locale'].'.'.$name;
+        if (isset($this->action['as'])) {
+            $this->action['as'] .= $name;
+        } elseif (isset($this->action['locale'])) {
+            $this->action['as'] = $this->action['locale'] . '.' . $name;
         } else {
             $this->action['as'] = $name;
         }
 
         return $this;
     }
-
 }

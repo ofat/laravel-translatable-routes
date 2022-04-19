@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ofat\LaravelTranslatableRoutes;
 
-use Illuminate\Routing\Route;
 use Illuminate\Routing\Router;
 use Illuminate\Routing\UrlGenerator;
 use Illuminate\Support\ServiceProvider;
@@ -15,14 +16,14 @@ use Ofat\LaravelTranslatableRoutes\UrlTranslator\Strategies\EmptyRouteUrlTransla
 
 class TranslatableRoutesServiceProvider extends ServiceProvider
 {
-    public function boot()
+    public function boot(): void
     {
         $this->publishes([
             __DIR__ . '/../config/translatable-routes.php' => config_path('translatable-routes.php'),
         ]);
     }
 
-    public function register()
+    public function register(): void
     {
         $this->extendRouter();
         $this->extendUrlGenerator();
@@ -30,33 +31,33 @@ class TranslatableRoutesServiceProvider extends ServiceProvider
         $this->registerUrlTranslatorContext();
     }
 
-    protected function extendRouter()
+    protected function extendRouter(): void
     {
-        $this->app->extend(Router::class, function (Router $service, $app) {
-            return new TranslatedRouter(new TranslationParser(), $service->getRoutes(), $app['events'], $app);
+        $this->app->extend(Router::class, static function (Router $service, $app) {
+            return new TranslatedRouter(new TranslationParser(), $service, $app['events'], $app);
         });
     }
 
-    protected function extendUrlGenerator()
+    protected function extendUrlGenerator(): void
     {
-        $this->app->extend('url', function (UrlGenerator $service, $app) {
+        $this->app->extend('url', static function (UrlGenerator $service, $app) {
             $routes = $app['router']->getRoutes();
 
             return new TranslatedUrlGenerator(new TranslationParser(), $routes, $service->getRequest(), $app['config']['app.asset_url']);
         });
     }
 
-    protected function registerRoutes()
+    protected function registerRoutes(): void
     {
         $this->app['router']->get('switch-locale/{locale}', SwitchLocaleController::class)->name('switch-locale');
     }
 
-    protected function registerUrlTranslatorContext()
+    protected function registerUrlTranslatorContext(): void
     {
-        $this->app->bind(Context::class, function ($app) {
+        $this->app->bind(Context::class, static function ($app) {
             $context = new Context();
-            $context->addStrategy( $app->make(EmptyRouteUrlTranslation::class) );
-            $context->addStrategy( $app->make(EmptyParametersUrlTranslation::class) );
+            $context->addStrategy($app->make(EmptyRouteUrlTranslation::class));
+            $context->addStrategy($app->make(EmptyParametersUrlTranslation::class));
 
             foreach (config('translatable-routes.url-translators', []) as $class) {
                 $context->addStrategy($app->make($class));
@@ -65,5 +66,4 @@ class TranslatableRoutesServiceProvider extends ServiceProvider
             return $context;
         });
     }
-
 }

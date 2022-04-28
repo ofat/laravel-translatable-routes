@@ -54,6 +54,7 @@ class TranslatedRouter extends Router
 
     public function localeGroup(Closure|string $callback): void
     {
+        $currentLocale = app()->getLocale();
         foreach (config('translatable-routes.locales', []) as $locale) {
             app()->setLocale($locale);
             $this
@@ -64,6 +65,7 @@ class TranslatedRouter extends Router
 
             array_pop($this->groupStack);
         }
+        app()->setLocale($currentLocale);
     }
 
     /**
